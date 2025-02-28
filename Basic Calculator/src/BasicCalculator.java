@@ -75,18 +75,38 @@ public class BasicCalculator {
     }
 
     private static double[] getNumbers(Scanner scanner) {
-        System.out.println("Enter the first number:");
-        double num1 = scanner.nextDouble();
-        System.out.println("Enter the second number:");
-        double num2 = scanner.nextDouble();
-        scanner.nextLine();
+        double num1 = 0, num2 = 0;
+        boolean validInput = false;
+
+        while (!validInput) {
+            try {
+                System.out.println("Enter the first number:");
+                num1 = Double.parseDouble(scanner.nextLine());
+
+                System.out.println("Enter the second number:");
+                num2 = Double.parseDouble(scanner.nextLine());
+
+                validInput = true; // Exit loop if no error occurs
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter numbers only.");
+            }
+        }
         return new double[]{num1, num2};
     }
 
     private static double getSingleNumber(Scanner scanner) {
-        System.out.println("Enter the first number:");
-        double num = scanner.nextDouble();
-        scanner.nextLine();
+        double num = 0;
+        boolean validInput = false;
+
+        while (!validInput) {
+            try {
+                System.out.println("Enter a number:");
+                num = Double.parseDouble(scanner.nextLine());
+                validInput = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
         return num;
     }
 
@@ -102,8 +122,12 @@ public class BasicCalculator {
     }
 
     private static void showResult(double result, String operation) {
-        System.out.println("Result: " + result);
-        history.add(operation + " = " + result);
+        if (Double.isNaN(result) || result == Double.POSITIVE_INFINITY || result == Double.NEGATIVE_INFINITY) {
+            System.out.println("Calculation failed, no result stored.");
+        } else {
+            System.out.println("Result: " + result);
+            history.add(operation + " = " + result);
+        }
     }
 }
 class CalculatorOperations {
@@ -123,7 +147,7 @@ class CalculatorOperations {
     public static double divide(double a, double b) {
         if(b == 0) {
             System.out.println("Error: Cannot divide by zero");
-            return 0;
+            return Double.NaN;
         } else {
             return a / b;
         }
@@ -140,7 +164,7 @@ class CalculatorOperations {
     public static double squareRoot(double a) {
         if (a < 0) {
             System.out.println("Error: Cannot take the square root of a negative number.");
-            return 0;
+            return Double.NaN;
         } else {
             return Math.sqrt(a);
         }
