@@ -1,11 +1,15 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class BasicCalculator {
+    private static List<String> history = new ArrayList<>();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, or type 'exit' to quit:");
+            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, history, clear history, or type 'exit' to quit:");
 
             String operator = scanner.nextLine();
 
@@ -14,43 +18,54 @@ public class BasicCalculator {
                 break;
             }
 
-            double result = 0;
+            if (operator.equalsIgnoreCase("history")) {
+                showHistory();
+                continue;
+            }
+
+            if (operator.equalsIgnoreCase("clear history")) {
+                history.clear();
+                System.out.println("Calculation history cleared.");
+                continue;
+            }
+
+            double result;
 
             switch (operator) {
                 case "+":
                     double[] additionNumbers = getNumbers(scanner);
                     result = CalculatorOperations.add(additionNumbers[0], additionNumbers[1]);
-                    showResult(result);
+                    showResult(result, additionNumbers[0] + " + " + additionNumbers[1]);
                     break;
                 case "-":
                     double[] subtractionNumbers = getNumbers(scanner);
                     result = CalculatorOperations.subtract(subtractionNumbers[0], subtractionNumbers[1]);
-                    showResult(result);
+                    showResult(result, subtractionNumbers[0] + " - " + subtractionNumbers[1]);
                     break;
                 case "*":
                     double[] multiplicationNumbers = getNumbers(scanner);
                     result = CalculatorOperations.multiply(multiplicationNumbers[0], multiplicationNumbers[1]);
-                    showResult(result);
+                    showResult(result, multiplicationNumbers[0] + " * " + multiplicationNumbers[1]);
                     break;
                 case "/":
                     double[] divisionNumbers = getNumbers(scanner);
                     result = CalculatorOperations.divide(divisionNumbers[0], divisionNumbers[1]);
-                    showResult(result);
+                    showResult(result, divisionNumbers[0] + " / " + divisionNumbers[1]);
                     break;
                 case "^":
                     double[] powerNumbers = getNumbers(scanner);
                     result = CalculatorOperations.exponentiation(powerNumbers[0], powerNumbers[1]);
-                    showResult(result);
+                    showResult(result, powerNumbers[0] + " ^ " + powerNumbers[1]);
                     break;
                 case "%":
                     double[] modulusNumbers = getNumbers(scanner);
                     result = CalculatorOperations.modulo(modulusNumbers[0], modulusNumbers[1]);
-                    showResult(result);
+                    showResult(result, modulusNumbers[0] + " % " + modulusNumbers[1]);
                     break;
                 case "sqrt":
                     double sqrtNumber = getSingleNumber(scanner);
                     result = CalculatorOperations.squareRoot(sqrtNumber);
-                    showResult(result);
+                    showResult(result, "√" + sqrtNumber);
                     break;
                 default:
                     System.out.println("Invalid operator, try again.");
@@ -75,8 +90,20 @@ public class BasicCalculator {
         return num;
     }
 
-    private static void showResult(double result) {
+    private static void showHistory() {
+        if(history.isEmpty()) {
+            System.out.println("No calculations yet.");
+        } else {
+            System.out.println("Calculation history:");
+            for (String entry : history) {
+                System.out.println(entry);
+            }
+        }
+    }
+
+    private static void showResult(double result, String operation) {
         System.out.println("Result: " + result);
+        history.add(operation + " = " + result);
     }
 }
 class CalculatorOperations {
