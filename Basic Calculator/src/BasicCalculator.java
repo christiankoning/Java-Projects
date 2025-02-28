@@ -5,7 +5,7 @@ public class BasicCalculator {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Choose an operator: +, -, *, /, or type 'exit' to quit:");
+            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, or type 'exit' to quit:");
 
             String operator = scanner.nextLine();
 
@@ -37,6 +37,21 @@ public class BasicCalculator {
                     result = CalculatorOperations.divide(divisionNumbers[0], divisionNumbers[1]);
                     showResult(result);
                     break;
+                case "^":
+                    double[] powerNumbers = getNumbers(scanner);
+                    result = CalculatorOperations.exponentiation(powerNumbers[0], powerNumbers[1]);
+                    showResult(result);
+                    break;
+                case "%":
+                    double[] modulusNumbers = getNumbers(scanner);
+                    result = CalculatorOperations.modulo(modulusNumbers[0], modulusNumbers[1]);
+                    showResult(result);
+                    break;
+                case "sqrt":
+                    double sqrtNumber = getSingleNumber(scanner);
+                    result = CalculatorOperations.squareRoot(sqrtNumber);
+                    showResult(result);
+                    break;
                 default:
                     System.out.println("Invalid operator, try again.");
             }
@@ -51,6 +66,13 @@ public class BasicCalculator {
         double num2 = scanner.nextDouble();
         scanner.nextLine();
         return new double[]{num1, num2};
+    }
+
+    private static double getSingleNumber(Scanner scanner) {
+        System.out.println("Enter the first number:");
+        double num = scanner.nextDouble();
+        scanner.nextLine();
+        return num;
     }
 
     private static void showResult(double result) {
@@ -77,6 +99,23 @@ class CalculatorOperations {
             return 0;
         } else {
             return a / b;
+        }
+    }
+
+    public static double exponentiation(double a, double b) {
+        return Math.pow(a, b);
+    }
+
+    public static double modulo(double a, double b) {
+        return a % b;
+    }
+
+    public static double squareRoot(double a) {
+        if (a < 0) {
+            System.out.println("Error: Cannot take the square root of a negative number.");
+            return 0;
+        } else {
+            return Math.sqrt(a);
         }
     }
 }
