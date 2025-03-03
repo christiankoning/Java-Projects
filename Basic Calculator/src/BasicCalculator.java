@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -5,6 +7,7 @@ import java.util.Scanner;
 public class BasicCalculator {
     private static List<String> history = new ArrayList<>();
     private static double previousResult = Double.NaN;
+    private static HistoryManager historyManager = new HistoryManager();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -121,7 +124,7 @@ public class BasicCalculator {
                 System.out.println("Enter the second number:");
                 num2 = Double.parseDouble(scanner.nextLine());
 
-                validInput = true; // Exit loop if no error occurs
+                validInput = true;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter numbers only.");
             }
@@ -163,6 +166,7 @@ public class BasicCalculator {
             System.out.println("Result: " + result);
             history.add(operation + " = " + result);
             previousResult = result;
+            historyManager.saveHistoryToFile(history);
         }
     }
 }
@@ -204,5 +208,23 @@ class CalculatorOperations {
         } else {
             return Math.sqrt(a);
         }
+    }
+}
+
+class HistoryManager {
+
+    public void saveHistoryToFile(List<String> history) {
+        try (FileWriter writer = new FileWriter("Basic Calculator/history.txt")) {
+            for (String entry : history) {
+                writer.write(entry + "\n");
+            }
+            System.out.println("History saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving history: " + e.getMessage());
+        }
+    }
+
+    public void loadHistoryFromFile() {
+
     }
 }
