@@ -102,7 +102,7 @@ public class AdvancedCLICalculator {
 }
 
 class HistoryManager {
-    private static final String HISTORY_FILE_PATH = "Basic Calculator/history.txt";
+    private static final String HISTORY_FILE_PATH = "Advanced CLI Calculator/history.txt";
     public void saveHistoryToFile(List<String> history) {
         try(FileWriter writer = new FileWriter(HISTORY_FILE_PATH)) {
             for (String entry : history) {
