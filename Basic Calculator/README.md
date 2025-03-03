@@ -22,7 +22,10 @@ history tracking, and input validation.
 
 ## 🔹 Future Enhancements
 
-- 🚀 
+- 🚀 **Parentheses Handling in Expressions:** Enable full support for expressions with nested operations for advanced calculations.
+- 🚀 **Statistical Functions:** Add statistical operations to make the calculator useful for data analysis and engineering.
+- 🚀 **Expression History Recall:** Instead of just viewing past calculations, allow users to reuse old expressions directly.
+- 🚀 **Graphing Support (for GUI version):** If a graphical interface is added in the future, implement function plotting (e.g., `y = sin(x)`).
 
 ## 🚀 How to Run
 
