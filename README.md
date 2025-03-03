@@ -15,6 +15,7 @@ and input validation.
   - **Basic Operations:** Addition, Subtraction, Multiplication, Division.
   - **Advanced Operations:** Exponents (^), Modulus (%), Square Root (√).
   - **More Math Functions:** Logarithm, Factorial, Trigonometric Functions (sin, cos, tan), Exponential.
+  - **Full Expression Support:** Supports multi-operation expressions with parentheses.
   - **Calculation History:** View & clear past calculations.
   - **Continuous Calculation Mode:** Use previous results in new calculations.
   - **Undo Last Calculation:** Removes the most recent calculation from history.
