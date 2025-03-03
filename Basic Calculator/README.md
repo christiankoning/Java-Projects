@@ -11,11 +11,11 @@ history tracking, and input validation.
   - Use the latest result as the first operand for new calculations.
   - Option to reset stored results (`clear` command).
   - Prevents divide-by-zero errors and invalid operations.
+- ✅ **Undo Last Calculation:** Remove the last entry from history if needed.
 
 ## 🔹 Future Enhancements
 
 - 🚀 **Save & Load History:** Store calculations in a file for later use
-- 🚀 **Undo Last Calculation:** Remove the last entry from history
 - 🚀 **More Math Functions:** Trigonometry, logarithms, factorial, etc.
 - 🚀 **Multiple Operations in One Line:** Support expressions like `2 + 3 * 5 / 2`
 

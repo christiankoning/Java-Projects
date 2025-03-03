@@ -16,6 +16,7 @@ and input validation.
   - **Advanced Operations:** Exponents (^), Modulus (%), Square Root (√)
   - **Calculation History:** View & clear past calculations
   - **Continuous Calculation Mode:** Use previous results in new calculations
+  - **Undo Last Calculation:** Remove the last calculation.
 
 ## 📅 Upcoming Projects
 - **File Organizer** – A CLI tool that organizes files into categorized folders.
