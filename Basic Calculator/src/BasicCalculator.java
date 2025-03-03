@@ -11,35 +11,35 @@ public class BasicCalculator {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        while (true) {
-            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, history, clear history, clear, undo, or type 'exit' to quit:");
+        while(true) {
+            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, log, fact, sin, cos, tan, exp, history, clear history, clear, undo, or type 'exit' to quit:");
 
             String operator = scanner.nextLine();
 
-            if (operator.equalsIgnoreCase("exit")) {
+            if(operator.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting the calculator...");
                 break;
             }
 
-            if (operator.equalsIgnoreCase("history")) {
+            if(operator.equalsIgnoreCase("history")) {
                 showHistory();
                 continue;
             }
 
-            if (operator.equalsIgnoreCase("clear history")) {
+            if(operator.equalsIgnoreCase("clear history")) {
                 history.clear();
                 System.out.println("Calculation history cleared.");
                 continue;
             }
 
-            if (operator.equalsIgnoreCase("clear")) {
+            if(operator.equalsIgnoreCase("clear")) {
                 previousResult = Double.NaN;
                 System.out.println("Previous result cleared.");
                 continue;
             }
 
-            if (operator.equalsIgnoreCase("undo")) {
-                if (!history.isEmpty()) {
+            if(operator.equalsIgnoreCase("undo")) {
+                if(!history.isEmpty()) {
                    history.remove(history.size() - 1);
                    System.out.println("Last calculation undone.");
                 } else {
@@ -50,7 +50,7 @@ public class BasicCalculator {
 
             double result;
 
-            switch (operator) {
+            switch(operator) {
                 case "+":
                     double[] additionNumbers = getNumbers(scanner);
                     result = CalculatorOperations.add(additionNumbers[0], additionNumbers[1]);
@@ -86,6 +86,36 @@ public class BasicCalculator {
                     result = CalculatorOperations.squareRoot(sqrtNumber);
                     showResult(result, "√" + sqrtNumber);
                     break;
+                case "log":
+                    double logNum = getSingleNumber(scanner);
+                    result = CalculatorOperations.logarithm(logNum);
+                    showResult(result, "log(" + logNum + ")");
+                    break;
+                case "fact":
+                    int factNum = getSingleInteger(scanner);
+                    result = CalculatorOperations.factorial(factNum);
+                    showResult(result, factNum + "!");
+                    break;
+                case "sin":
+                    double sinNum = getSingleNumber(scanner);
+                    result = CalculatorOperations.sine(sinNum);
+                    showResult(result, "sin(" + sinNum + ")");
+                    break;
+                case "cos":
+                    double cosNum = getSingleNumber(scanner);
+                    result = CalculatorOperations.cosine(cosNum);
+                    showResult(result, "cos(" + cosNum + ")");
+                    break;
+                case "tan":
+                    double tanNum = getSingleNumber(scanner);
+                    result = CalculatorOperations.tangent(tanNum);
+                    showResult(result, "tan(" + tanNum + ")");
+                    break;
+                case "exp":
+                    double expNum = getSingleNumber(scanner);
+                    result = CalculatorOperations.exponential(expNum);
+                    showResult(result, "e^" + expNum);
+                    break;
                 default:
                     System.out.println("Invalid operator, try again.");
             }
@@ -97,25 +127,25 @@ public class BasicCalculator {
         double num1 = 0, num2 = 0;
         boolean validInput = false;
 
-        if (!Double.isNaN(previousResult)) {
+        if(!Double.isNaN(previousResult)) {
             System.out.println("Use previous result? (yes/no)");
             String response = scanner.nextLine().trim().toLowerCase();
 
-            if (response.equals("yes")) {
-                while (!validInput) {
+            if(response.equals("yes")) {
+                while(!validInput) {
                     try {
                         num1 = previousResult;
                         System.out.println("Enter the second number:");
                         num2 = Double.parseDouble(scanner.nextLine());
                         return new double[]{num1, num2};
-                    } catch (NumberFormatException e) {
+                    } catch(NumberFormatException e) {
                         System.out.println("Invalid input. Please enter numbers only.");
                     }
                 }
             }
         }
 
-        while (!validInput) {
+        while(!validInput) {
             try {
                 System.out.println("Enter the first number:");
                 num1 = Double.parseDouble(scanner.nextLine());
@@ -124,7 +154,7 @@ public class BasicCalculator {
                 num2 = Double.parseDouble(scanner.nextLine());
 
                 validInput = true;
-            } catch (NumberFormatException e) {
+            } catch(NumberFormatException e) {
                 System.out.println("Invalid input. Please enter numbers only.");
             }
         }
@@ -135,13 +165,34 @@ public class BasicCalculator {
         double num = 0;
         boolean validInput = false;
 
-        while (!validInput) {
+        while(!validInput) {
             try {
                 System.out.println("Enter a number:");
                 num = Double.parseDouble(scanner.nextLine());
                 validInput = true;
-            } catch (NumberFormatException e) {
+            } catch(NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+        return num;
+    }
+
+    private static int getSingleInteger(Scanner scanner) {
+        int num = 0;
+        boolean validInput = false;
+
+        while(!validInput) {
+            try {
+                System.out.println("Enter a non-negative number:");
+                num = Integer.parseInt(scanner.nextLine());
+
+                if(num < 0) {
+                    System.out.println("Invalid input. Please enter a non-negative number.");
+                } else {
+                    validInput = true;
+                }
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number");
             }
         }
         return num;
@@ -159,7 +210,7 @@ public class BasicCalculator {
     }
 
     private static void showResult(double result, String operation) {
-        if (Double.isNaN(result) || result == Double.POSITIVE_INFINITY || result == Double.NEGATIVE_INFINITY) {
+        if(Double.isNaN(result) || result == Double.POSITIVE_INFINITY || result == Double.NEGATIVE_INFINITY) {
             System.out.println("Calculation failed, no result stored.");
         } else {
             System.out.println("Result: " + result);
@@ -169,6 +220,7 @@ public class BasicCalculator {
         }
     }
 }
+
 class CalculatorOperations {
 
     public static double add(double a, double b) {
@@ -201,24 +253,60 @@ class CalculatorOperations {
     }
 
     public static double squareRoot(double a) {
-        if (a < 0) {
+        if(a < 0) {
             System.out.println("Error: Cannot take the square root of a negative number.");
             return Double.NaN;
         } else {
             return Math.sqrt(a);
         }
     }
+
+    public static double logarithm(double a) {
+        if(a <= 0) {
+            System.out.println("Error: Logarithm is undefined for non-positive numbers.");
+            return Double.NaN;
+        }
+        return Math.log(a);
+    }
+
+    public static double factorial(int a) {
+        if(a < 0) {
+            System.out.println("Error: Factorial is only defined for non-negative integers");
+            return Double.NaN;
+        }
+        long fact = 1;
+        for(int i = 2; i < a; i++) {
+            fact *= i;
+        }
+        return fact;
+    }
+
+    public static double sine(double a) {
+        return Math.sin(a);
+    }
+
+    public static double cosine(double a) {
+        return Math.cos(a);
+    }
+
+    public static double tangent(double a) {
+        return Math.tan(a);
+    }
+
+    public static double exponential(double a) {
+        return Math.exp(a);
+    }
 }
 
 class HistoryManager {
     private static final String HISTORY_FILE_PATH = "Basic Calculator/history.txt";
     public void saveHistoryToFile(List<String> history) {
-        try (FileWriter writer = new FileWriter(HISTORY_FILE_PATH)) {
+        try(FileWriter writer = new FileWriter(HISTORY_FILE_PATH)) {
             for (String entry : history) {
                 writer.write(entry + "\n");
             }
             System.out.println("History saved successfully.");
-        } catch (IOException e) {
+        } catch(IOException e) {
             System.out.println("Error saving history: " + e.getMessage());
         }
     }
@@ -227,18 +315,18 @@ class HistoryManager {
         List<String> loadedHistory = new ArrayList<>();
         File file = new File(HISTORY_FILE_PATH);
 
-        if (!file.exists()) {
+        if(!file.exists()) {
             System.out.println("No previous history found.");
             return loadedHistory;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(HISTORY_FILE_PATH))) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(HISTORY_FILE_PATH))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while((line = reader.readLine()) != null) {
                 loadedHistory.add(line);
             }
             System.out.println("History loaded succesfully.");
-        } catch (IOException e) {
+        } catch(IOException e) {
             System.out.println("Error loading history: " + e.getMessage());
         }
         return loadedHistory;
