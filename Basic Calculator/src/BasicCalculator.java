@@ -14,7 +14,18 @@ public class BasicCalculator {
         Scanner scanner = new Scanner(System.in);
 
         while(true) {
-            System.out.println("Enter a mathematical expression (e.g., 5 + 3 * 2) or a command (history, clear history, clear, undo, exit):");
+            System.out.println("\n========= BASIC CALCULATOR =========");
+            System.out.println("🔹 Enter a mathematical expression (e.g., 5 + 3 * 2)");
+            System.out.println("🔹 Use 'ans' to refer to the last result (e.g., ans * 2)");
+            System.out.println("🔹 Available commands:");
+            System.out.println("   - history        → View previous calculations");
+            System.out.println("   - clear history  → Delete all saved calculations");
+            System.out.println("   - clear          → Reset last result ('ans')");
+            System.out.println("   - undo           → Remove last calculation from history");
+            System.out.println("   - exit           → Quit the calculator");
+            System.out.println("=====================================");
+
+            System.out.print("\nEnter your input: ");
 
             String operator = scanner.nextLine().trim();
 
