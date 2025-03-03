@@ -11,8 +11,11 @@ including algorithms, data structures, object-oriented design, and real-world ap
 ### ✅ Basic Calculator
 - A command-line calculator that supports basic & advanced operations, history tracking, 
 and input validation.
-- Features: Addition, Subtraction, Multiplication, Division, Exponentiation, Modulo,
-Square Root.
+- **Features**: 
+  - **Basic Operations:** Addition, Subtraction, Multiplication, Division
+  - **Advanced Operations:** Exponents (^), Modulus (%), Square Root (√)
+  - **Calculation History:** View & clear past calculations
+  - **Continuous Calculation Mode:** Use previous results in new calculations
 
 ## 📅 Upcoming Projects
 - **File Organizer** – A CLI tool that organizes files into categorized folders.
