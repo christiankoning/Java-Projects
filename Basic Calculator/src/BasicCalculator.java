@@ -4,12 +4,13 @@ import java.util.Scanner;
 
 public class BasicCalculator {
     private static List<String> history = new ArrayList<>();
+    private static double previousResult = Double.NaN;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, history, clear history, or type 'exit' to quit:");
+            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, history, clear history, clear, or type 'exit' to quit:");
 
             String operator = scanner.nextLine();
 
@@ -26,6 +27,12 @@ public class BasicCalculator {
             if (operator.equalsIgnoreCase("clear history")) {
                 history.clear();
                 System.out.println("Calculation history cleared.");
+                continue;
+            }
+
+            if (operator.equalsIgnoreCase("clear")) {
+                previousResult = Double.NaN;
+                System.out.println("Previous result cleared.");
                 continue;
             }
 
@@ -78,6 +85,24 @@ public class BasicCalculator {
         double num1 = 0, num2 = 0;
         boolean validInput = false;
 
+        if (!Double.isNaN(previousResult)) {
+            System.out.println("Use previous result? (yes/no)");
+            String response = scanner.nextLine().trim().toLowerCase();
+
+            if (response.equals("yes")) {
+                while (!validInput) {
+                    try {
+                        num1 = previousResult;
+                        System.out.println("Enter the second number:");
+                        num2 = Double.parseDouble(scanner.nextLine());
+                        return new double[]{num1, num2};
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter numbers only.");
+                    }
+                }
+            }
+        }
+
         while (!validInput) {
             try {
                 System.out.println("Enter the first number:");
@@ -127,6 +152,7 @@ public class BasicCalculator {
         } else {
             System.out.println("Result: " + result);
             history.add(operation + " = " + result);
+            previousResult = result;
         }
     }
 }
