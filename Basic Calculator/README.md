@@ -12,10 +12,10 @@ history tracking, and input validation.
   - Option to reset stored results (`clear` command).
   - Prevents divide-by-zero errors and invalid operations.
 - ✅ **Undo Last Calculation:** Remove the last entry from history if needed.
+- ✅ **Save & Load History:** Calculations are stored in a `history.txt` file and persists across sessions.
 
 ## 🔹 Future Enhancements
 
-- 🚀 **Save & Load History:** Store calculations in a file for later use
 - 🚀 **More Math Functions:** Trigonometry, logarithms, factorial, etc.
 - 🚀 **Multiple Operations in One Line:** Support expressions like `2 + 3 * 5 / 2`
 
