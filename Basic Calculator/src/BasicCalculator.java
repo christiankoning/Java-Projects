@@ -10,7 +10,7 @@ public class BasicCalculator {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, history, clear history, clear, or type 'exit' to quit:");
+            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, history, clear history, clear, undo, or type 'exit' to quit:");
 
             String operator = scanner.nextLine();
 
@@ -33,6 +33,16 @@ public class BasicCalculator {
             if (operator.equalsIgnoreCase("clear")) {
                 previousResult = Double.NaN;
                 System.out.println("Previous result cleared.");
+                continue;
+            }
+
+            if (operator.equalsIgnoreCase("undo")) {
+                if (!history.isEmpty()) {
+                   history.remove(history.size() - 1);
+                   System.out.println("Last calculation undone.");
+                } else {
+                    System.out.println("No calculations to undo.");
+                }
                 continue;
             }
 
