@@ -1,6 +1,6 @@
-## Basic Calculator 🧮
-A simple command-line calculator built in Java that supports basic operations, 
-history tracking, and input validation.
+## Advanced CLI Calculator 🧮
+This project started as a simple command-line calculator but evolved into an advanced CLI-based mathematical expression solver.
+It now supports **full expression evaluation**, **trigonometric functions**, **history tracking**, and **continuous calculations**.
 
 ### 📌 Features Implemented
 - ✅ **Basic Arithmetic:** Addition (+), Subtraction (-), Multiplication (*), Division (/).
@@ -32,4 +32,9 @@ history tracking, and input validation.
 - 1️⃣ Clone the repository  
 - 2️⃣ Navigate to the `Basic Calculator` directory  
 - 3️⃣ Compile and run `BasicCalculator.java`  
-- 4️⃣ Enter a mathematical expression or use commands (`history`, `clear history`, `clear`, `undo`, `exit`)  
+- 4️⃣ Enter a mathematical expression or use commands:
+  - **history** View past calculations.
+  - **clear history** Clear stored calculations.
+  - **clear** Reset stored result (`ans`).
+  - **undo** Remove last calculation from history.
+  - **exit** Quit the program.

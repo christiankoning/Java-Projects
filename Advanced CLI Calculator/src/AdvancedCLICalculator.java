@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-public class BasicCalculator {
+public class AdvancedCLICalculator {
     private static HistoryManager historyManager = new HistoryManager();
     private static List<String> history = historyManager.loadHistoryFromFile();
     private static double previousResult = Double.NaN;

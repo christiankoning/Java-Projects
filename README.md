@@ -8,9 +8,8 @@ including algorithms, data structures, object-oriented design, and real-world ap
 
 ## 📂 Projects Completed
 
-### ✅ Basic Calculator
-- A command-line calculator that supports basic & advanced operations, history tracking, 
-and input validation.
+### ✅ Advanced CLI Calculator
+- A command-line calculator that started as a **Basic Calculator** but evolved into an **Advanced Expression Solver**.
 - **Features**: 
   - **Basic Operations:** Addition, Subtraction, Multiplication, Division.
   - **Advanced Operations:** Exponents (^), Modulus (%), Square Root (√).
