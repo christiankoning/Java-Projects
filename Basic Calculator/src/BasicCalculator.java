@@ -1,13 +1,12 @@
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class BasicCalculator {
-    private static List<String> history = new ArrayList<>();
-    private static double previousResult = Double.NaN;
     private static HistoryManager historyManager = new HistoryManager();
+    private static List<String> history = historyManager.loadHistoryFromFile();
+    private static double previousResult = Double.NaN;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -212,9 +211,9 @@ class CalculatorOperations {
 }
 
 class HistoryManager {
-
+    private static final String HISTORY_FILE_PATH = "Basic Calculator/history.txt";
     public void saveHistoryToFile(List<String> history) {
-        try (FileWriter writer = new FileWriter("Basic Calculator/history.txt")) {
+        try (FileWriter writer = new FileWriter(HISTORY_FILE_PATH)) {
             for (String entry : history) {
                 writer.write(entry + "\n");
             }
@@ -224,7 +223,24 @@ class HistoryManager {
         }
     }
 
-    public void loadHistoryFromFile() {
+    public List<String> loadHistoryFromFile() {
+        List<String> loadedHistory = new ArrayList<>();
+        File file = new File(HISTORY_FILE_PATH);
 
+        if (!file.exists()) {
+            System.out.println("No previous history found.");
+            return loadedHistory;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(HISTORY_FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                loadedHistory.add(line);
+            }
+            System.out.println("History loaded succesfully.");
+        } catch (IOException e) {
+            System.out.println("Error loading history: " + e.getMessage());
+        }
+        return loadedHistory;
     }
 }
