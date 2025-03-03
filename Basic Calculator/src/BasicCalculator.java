@@ -2,6 +2,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class BasicCalculator {
     private static HistoryManager historyManager = new HistoryManager();
@@ -12,9 +14,9 @@ public class BasicCalculator {
         Scanner scanner = new Scanner(System.in);
 
         while(true) {
-            System.out.println("Choose an operator: +, -, *, /, ^, %, sqrt, log, fact, sin, cos, tan, exp, history, clear history, clear, undo, or type 'exit' to quit:");
+            System.out.println("Enter a mathematical expression (e.g., 5 + 3 * 2) or a command (history, clear history, clear, undo, exit):");
 
-            String operator = scanner.nextLine();
+            String operator = scanner.nextLine().trim();
 
             if(operator.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting the calculator...");
@@ -47,155 +49,8 @@ public class BasicCalculator {
                 }
                 continue;
             }
-
-            double result;
-
-            switch(operator) {
-                case "+":
-                    double[] additionNumbers = getNumbers(scanner);
-                    result = CalculatorOperations.add(additionNumbers[0], additionNumbers[1]);
-                    showResult(result, additionNumbers[0] + " + " + additionNumbers[1]);
-                    break;
-                case "-":
-                    double[] subtractionNumbers = getNumbers(scanner);
-                    result = CalculatorOperations.subtract(subtractionNumbers[0], subtractionNumbers[1]);
-                    showResult(result, subtractionNumbers[0] + " - " + subtractionNumbers[1]);
-                    break;
-                case "*":
-                    double[] multiplicationNumbers = getNumbers(scanner);
-                    result = CalculatorOperations.multiply(multiplicationNumbers[0], multiplicationNumbers[1]);
-                    showResult(result, multiplicationNumbers[0] + " * " + multiplicationNumbers[1]);
-                    break;
-                case "/":
-                    double[] divisionNumbers = getNumbers(scanner);
-                    result = CalculatorOperations.divide(divisionNumbers[0], divisionNumbers[1]);
-                    showResult(result, divisionNumbers[0] + " / " + divisionNumbers[1]);
-                    break;
-                case "^":
-                    double[] powerNumbers = getNumbers(scanner);
-                    result = CalculatorOperations.exponentiation(powerNumbers[0], powerNumbers[1]);
-                    showResult(result, powerNumbers[0] + " ^ " + powerNumbers[1]);
-                    break;
-                case "%":
-                    double[] modulusNumbers = getNumbers(scanner);
-                    result = CalculatorOperations.modulo(modulusNumbers[0], modulusNumbers[1]);
-                    showResult(result, modulusNumbers[0] + " % " + modulusNumbers[1]);
-                    break;
-                case "sqrt":
-                    double sqrtNumber = getSingleNumber(scanner);
-                    result = CalculatorOperations.squareRoot(sqrtNumber);
-                    showResult(result, "√" + sqrtNumber);
-                    break;
-                case "log":
-                    double logNum = getSingleNumber(scanner);
-                    result = CalculatorOperations.logarithm(logNum);
-                    showResult(result, "log(" + logNum + ")");
-                    break;
-                case "fact":
-                    int factNum = getSingleInteger(scanner);
-                    result = CalculatorOperations.factorial(factNum);
-                    showResult(result, factNum + "!");
-                    break;
-                case "sin":
-                    double sinNum = getSingleNumber(scanner);
-                    result = CalculatorOperations.sine(sinNum);
-                    showResult(result, "sin(" + sinNum + ")");
-                    break;
-                case "cos":
-                    double cosNum = getSingleNumber(scanner);
-                    result = CalculatorOperations.cosine(cosNum);
-                    showResult(result, "cos(" + cosNum + ")");
-                    break;
-                case "tan":
-                    double tanNum = getSingleNumber(scanner);
-                    result = CalculatorOperations.tangent(tanNum);
-                    showResult(result, "tan(" + tanNum + ")");
-                    break;
-                case "exp":
-                    double expNum = getSingleNumber(scanner);
-                    result = CalculatorOperations.exponential(expNum);
-                    showResult(result, "e^" + expNum);
-                    break;
-                default:
-                    System.out.println("Invalid operator, try again.");
-            }
-
+            performCalculation(operator);
         }
-    }
-
-    private static double[] getNumbers(Scanner scanner) {
-        double num1 = 0, num2 = 0;
-        boolean validInput = false;
-
-        if(!Double.isNaN(previousResult)) {
-            System.out.println("Use previous result? (yes/no)");
-            String response = scanner.nextLine().trim().toLowerCase();
-
-            if(response.equals("yes")) {
-                while(!validInput) {
-                    try {
-                        num1 = previousResult;
-                        System.out.println("Enter the second number:");
-                        num2 = Double.parseDouble(scanner.nextLine());
-                        return new double[]{num1, num2};
-                    } catch(NumberFormatException e) {
-                        System.out.println("Invalid input. Please enter numbers only.");
-                    }
-                }
-            }
-        }
-
-        while(!validInput) {
-            try {
-                System.out.println("Enter the first number:");
-                num1 = Double.parseDouble(scanner.nextLine());
-
-                System.out.println("Enter the second number:");
-                num2 = Double.parseDouble(scanner.nextLine());
-
-                validInput = true;
-            } catch(NumberFormatException e) {
-                System.out.println("Invalid input. Please enter numbers only.");
-            }
-        }
-        return new double[]{num1, num2};
-    }
-
-    private static double getSingleNumber(Scanner scanner) {
-        double num = 0;
-        boolean validInput = false;
-
-        while(!validInput) {
-            try {
-                System.out.println("Enter a number:");
-                num = Double.parseDouble(scanner.nextLine());
-                validInput = true;
-            } catch(NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-        return num;
-    }
-
-    private static int getSingleInteger(Scanner scanner) {
-        int num = 0;
-        boolean validInput = false;
-
-        while(!validInput) {
-            try {
-                System.out.println("Enter a non-negative number:");
-                num = Integer.parseInt(scanner.nextLine());
-
-                if(num < 0) {
-                    System.out.println("Invalid input. Please enter a non-negative number.");
-                } else {
-                    validInput = true;
-                }
-            } catch(NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number");
-            }
-        }
-        return num;
     }
 
     private static void showHistory() {
@@ -219,82 +74,19 @@ public class BasicCalculator {
             historyManager.saveHistoryToFile(history);
         }
     }
-}
 
-class CalculatorOperations {
+    private static void performCalculation(String input) {
+        if (!Double.isNaN(previousResult)) {
+            input = input.replace("ans", String.valueOf(previousResult));
+        }
 
-    public static double add(double a, double b) {
-        return a + b;
-    }
+        double result = ExpressionEvaluator.evaluateExpression(input);
 
-    public static double subtract(double a, double b) {
-        return a - b;
-    }
-
-    public static double multiply(double a, double b) {
-        return a * b;
-    }
-
-    public static double divide(double a, double b) {
-        if(b == 0) {
-            System.out.println("Error: Cannot divide by zero");
-            return Double.NaN;
+        if(!Double.isNaN(result)) {
+            showResult(result, input);
         } else {
-            return a / b;
+            System.out.println("Invalid expression. Please enter a valid mathematical expression.");
         }
-    }
-
-    public static double exponentiation(double a, double b) {
-        return Math.pow(a, b);
-    }
-
-    public static double modulo(double a, double b) {
-        return a % b;
-    }
-
-    public static double squareRoot(double a) {
-        if(a < 0) {
-            System.out.println("Error: Cannot take the square root of a negative number.");
-            return Double.NaN;
-        } else {
-            return Math.sqrt(a);
-        }
-    }
-
-    public static double logarithm(double a) {
-        if(a <= 0) {
-            System.out.println("Error: Logarithm is undefined for non-positive numbers.");
-            return Double.NaN;
-        }
-        return Math.log(a);
-    }
-
-    public static double factorial(int a) {
-        if(a < 0) {
-            System.out.println("Error: Factorial is only defined for non-negative integers");
-            return Double.NaN;
-        }
-        long fact = 1;
-        for(int i = 2; i < a; i++) {
-            fact *= i;
-        }
-        return fact;
-    }
-
-    public static double sine(double a) {
-        return Math.sin(a);
-    }
-
-    public static double cosine(double a) {
-        return Math.cos(a);
-    }
-
-    public static double tangent(double a) {
-        return Math.tan(a);
-    }
-
-    public static double exponential(double a) {
-        return Math.exp(a);
     }
 }
 
@@ -330,5 +122,85 @@ class HistoryManager {
             System.out.println("Error loading history: " + e.getMessage());
         }
         return loadedHistory;
+    }
+}
+
+class ExpressionEvaluator {
+    public static double evaluateExpression(String expression) {
+        try {
+            return evaluatePostfix(convertToPostfix(expression));
+        } catch (Exception e) {
+            System.out.println("Invalid expression. Please try again.");
+            return Double.NaN;
+        }
+    }
+
+    private static String convertToPostfix(String infix) {
+        StringBuilder postfix = new StringBuilder();
+        Stack<Character> stack = new Stack<>();
+
+        StringTokenizer tokens = new StringTokenizer(infix, "+-*/^%()", true);
+        while (tokens.hasMoreTokens()) {
+            String token = tokens.nextToken().trim();
+            if (token.isEmpty()) continue;
+
+            if (isNumber(token)) {
+                postfix.append(token).append(" ");
+            } else if (token.equals("(")) {
+                stack.push('(');
+            } else if (token.equals(")")) {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    postfix.append(stack.pop()).append(" ");
+                }
+                stack.pop();
+            } else {
+                while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(token.charAt(0))) {
+                    postfix.append(stack.pop()).append(" ");
+                }
+                stack.push(token.charAt(0));
+            }
+        }
+
+        while (!stack.isEmpty()) {
+            postfix.append(stack.pop()).append(" ");
+        }
+        return postfix.toString();
+    }
+
+    private static double evaluatePostfix(String postfix) {
+        Stack<Double> stack = new Stack<>();
+        StringTokenizer tokens = new StringTokenizer(postfix);
+
+        while (tokens.hasMoreTokens()) {
+            String token = tokens.nextToken();
+            if (isNumber(token)) {
+                stack.push(Double.parseDouble(token));
+            } else {
+                double b = stack.pop();
+                double a = stack.pop();
+                switch (token.charAt(0)) {
+                    case '+': stack.push(a + b); break;
+                    case '-': stack.push(a - b); break;
+                    case '*': stack.push(a * b); break;
+                    case '/': stack.push(a / b); break;
+                    case '^': stack.push(Math.pow(a, b)); break;
+                    case '%': stack.push(a % b); break;
+                }
+            }
+        }
+        return stack.pop();
+    }
+
+    private static boolean isNumber(String token) {
+        return token.matches("-?\\d+(\\.\\d+)?");
+    }
+
+    private static int precedence(char operator) {
+        return switch (operator) {
+            case '+', '-' -> 1;
+            case '*', '/' -> 2;
+            case '^' -> 3;
+            default -> 0;
+        };
     }
 }
