@@ -13,10 +13,14 @@ history tracking, and input validation.
   - Prevents divide-by-zero errors and invalid operations.
 - ✅ **Undo Last Calculation:** Remove the last entry from history if needed.
 - ✅ **Save & Load History:** Calculations are stored in a `history.txt` file and persists across sessions.
+- ✅ **More Math Functions:**
+  - **Logarithm:** `log(x)`.
+  - **Factorial:** `x!`.
+  - **Trigonometric Functions:** `sin(x)`, `cos(x)`, `tan(x)`.
+  - **Exponential:** `e^x`.
 
 ## 🔹 Future Enhancements
 
-- 🚀 **More Math Functions:** Trigonometry, logarithms, factorial, etc.
 - 🚀 **Multiple Operations in One Line:** Support expressions like `2 + 3 * 5 / 2`
 
 ## 🚀 How to Run
