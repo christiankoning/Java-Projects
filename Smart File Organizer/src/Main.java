@@ -3,6 +3,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -15,13 +19,35 @@ public class Main {
         System.out.println("Enter the folder path: ");
         String folderPath = scanner.nextLine();
 
-        // Process file organization
-        organizeFilesByType(folderPath);
+        // Ask the user for sorting method
+        System.out.println("Choose sorting method:");
+        System.out.println("1. Sort by file type");
+        System.out.println("2. Sort by file date");
+        System.out.print("Enter choice (1 or 2): ");
+        int choice = scanner.nextInt();
+
+        FileOrganizer organizer = new FileOrganizer(folderPath);
+
+        if (choice == 1) {
+            organizer.organizeFiles("type");
+        } else if (choice == 2) {
+            organizer.organizeFiles("date");
+        } else {
+            System.out.println("Invalid choice. Exiting...");
+        }
 
         scanner.close();
     }
+}
 
-    private static void organizeFilesByType(String folderPath) {
+class FileOrganizer {
+    private final String folderPath;
+
+    public FileOrganizer(String folderPath) {
+        this.folderPath = folderPath;
+    }
+
+    public void organizeFiles(String method) {
         File folder = new File(folderPath);
 
         // Validate if folder exists
@@ -36,19 +62,28 @@ public class Main {
             return;
         }
 
-        System.out.println("\nOrganizing files in: " + folderPath);
+        System.out.println("\nOrganizing files by " + method + " in: " + folderPath);
 
         for (File file : files) {
             if (file.isFile()) {
-                String category = getCategoryForFile(file);
+                String category = getCategory(file, method);
                 if (category != null) {
-                    moveFileToCategory(file, folderPath, category);
+                    moveFile(file, category);
                 }
             }
         }
     }
 
-    private static String getCategoryForFile(File file) {
+    private String getCategory(File file, String method) {
+        if ("type".equals(method)) {
+            return getFileTypeCategory(file);
+        } else if ("date".equals(method)) {
+            return getFileDateCategory(file);
+        }
+        return null;
+    }
+
+    private String getFileTypeCategory(File file) {
         String fileName = file.getName();
         int dotIndex = fileName.lastIndexOf(".");
 
@@ -60,8 +95,24 @@ public class Main {
         return Categories.getCategory(extension);
     }
 
-    private static void moveFileToCategory(File file, String baseFolderPath, String category) {
-        File categoryFolder = new File(baseFolderPath, category);
+    private String getFileDateCategory(File file) {
+        try {
+            Path filePath = file.toPath();
+            BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
+
+            FileTime fileTime = attr.lastModifiedTime();
+            Date date = new Date(fileTime.toMillis());
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+            return dateFormat.format(date);
+        } catch (IOException e) {
+            System.out.println("Error retrieving date for: " + file.getName());
+            return null;
+        }
+    }
+
+    private void moveFile(File file, String category) {
+        File categoryFolder = new File(folderPath, category);
 
         if (!categoryFolder.exists()) {
             categoryFolder.mkdir();
