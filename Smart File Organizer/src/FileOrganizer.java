@@ -15,6 +15,7 @@ public class FileOrganizer {
     private final Map<String, String> fileHashes = new HashMap<>();
     private final File logFile;
     private final Map<Pattern, String> userRules = new HashMap<>();
+    private static final String RULES_FILE_PATH = "Smart File Organizer/rules.txt";
 
     public FileOrganizer(String folderPath) {
         this.folderPath = folderPath;
@@ -23,7 +24,7 @@ public class FileOrganizer {
     }
 
     private void loadUserRules() {
-        File rulesFile = new File(folderPath, "rules.txt");
+        File rulesFile = new File(RULES_FILE_PATH);
         if(!rulesFile.exists()) {
             System.out.println("No custom rules found. Skipping...");
             return;
