@@ -8,15 +8,41 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class FileOrganizer {
     private final String folderPath;
     private final Map<String, String> fileHashes = new HashMap<>();
     private final File logFile;
+    private final Map<Pattern, String> userRules = new HashMap<>();
 
     public FileOrganizer(String folderPath) {
         this.folderPath = folderPath;
         this.logFile = new File(folderPath, "logs.txt");
+        loadUserRules();
+    }
+
+    private void loadUserRules() {
+        File rulesFile = new File(folderPath, "rules.txt");
+        if(!rulesFile.exists()) {
+            System.out.println("No custom rules found. Skipping...");
+            return;
+        }
+
+        try(BufferedReader reader = new BufferedReader(new FileReader(rulesFile))) {
+            String line;
+            while((line = reader.readLine()) != null) {
+                String[] parts = line.split("->");
+                if(parts.length == 2) {
+                    String regex = parts[0].trim();
+                    String category = parts[1].trim();
+                    userRules.put(Pattern.compile(regex), category);
+                }
+            }
+            System.out.println("Loaded " + userRules.size() + " custom rules.");
+        } catch (IOException e) {
+            System.out.println("Error loading rules: " + e.getMessage());
+        }
     }
 
     public void organizeFiles(String method) {
@@ -170,6 +196,14 @@ public class FileOrganizer {
     }
 
     private String getCategory(File file, String method) {
+        // First check for user-defined rules
+        for (Map.Entry<Pattern, String> rule : userRules.entrySet()) {
+            if (rule.getKey().matcher(file.getName()).matches()) {
+                return rule.getValue();
+            }
+        }
+
+        // Fallback to default sorting methods
         if ("type".equals(method)) {
             return getFileTypeCategory(file);
         } else if ("date".equals(method)) {
