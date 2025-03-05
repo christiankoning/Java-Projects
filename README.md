@@ -31,7 +31,6 @@ including algorithms, data structures, object-oriented design, and real-world ap
   - **User-Defined Rules:** Allows custom sorting rules (e.g., regex-based file categorization).
 
 ## 📅 Upcoming Projects
-- **File Organizer** – A CLI tool that organizes files into categorized folders.
 - **To-Do List CLI App** – A simple task manager with options to add, remove,
 and mark tasks as completed.
 - **Mini Banking System** – A console-based banking simulation with deposit, withdrawal,
