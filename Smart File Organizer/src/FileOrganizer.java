@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -10,10 +7,7 @@ import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class FileOrganizer {
     private final String folderPath;
@@ -61,6 +55,117 @@ public class FileOrganizer {
                     }
                 }
             }
+        }
+    }
+
+    public void undoLastAction() {
+        if(!logFile.exists() || logFile.length() == 0) {
+            System.out.println("No actions to undo.");
+            return;
+        }
+
+        List<String> logLines = new ArrayList<>();
+        String lastAction = null;
+
+        // Read all log entries
+        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                logLines.add(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading log file: " + e.getMessage());
+            return;
+        }
+
+        if(logLines.isEmpty()) {
+            System.out.println("No actions to undo.");
+            return;
+        }
+
+        lastAction = logLines.remove(logLines.size() - 1);
+        System.out.println("Undoing last action: " + lastAction);
+
+        // Parse the last action
+        if(lastAction.contains("Moved:")) {
+            undoMove(lastAction);
+        } else if (lastAction.contains("Renamed:")) {
+            undoRename(lastAction);
+        } else if (lastAction.contains("Deleted:")) {
+            undoDelete(lastAction);
+        } else {
+            System.out.println("Unable to recognize the last action.");
+            return;
+        }
+
+        // Rewrite the log file without the last action
+        try (FileWriter writer = new FileWriter(logFile, false)) {
+            for (String log : logLines) {
+                writer.write(log + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error updating log file: " + e.getMessage());
+        }
+    }
+
+    private void undoMove(String logEntry) {
+        // Extract file name and category from the log entry
+        String[] parts = logEntry.split("->");
+        if(parts.length != 2) return;
+
+        String fileName = parts[0].replace("Moved: ", "").trim();
+        String category = parts[1].trim();
+
+        File movedFile = new File(folderPath + "/" + category, fileName);
+        File originalFile = new File(folderPath, fileName);
+
+        if(movedFile.exists()) {
+            if(movedFile.renameTo(originalFile)) {
+                System.out.println("Restored: " + fileName + " back to " + folderPath);
+            } else {
+                System.out.println("Failed to restore: " + fileName);
+            }
+        } else {
+            System.out.println("File not found for undo: " + fileName);
+        }
+    }
+
+    private void undoRename(String logEntry) {
+        // Extract old and new file names from the log entry
+        String[] parts = logEntry.split("->");
+        if(parts.length != 2) return;
+
+        String oldName = parts[0].trim();
+        String newName = parts[1].trim();
+
+        File renamedFile = new File(folderPath, newName);
+        File originalFile = new File(folderPath, oldName);
+
+        if(renamedFile.exists()) {
+            if(renamedFile.renameTo(originalFile)) {
+                System.out.println("Renamend back: " + newName + " -> " + oldName);
+            } else {
+                System.out.println("Failed to rename back: " + newName);
+            }
+        } else {
+            System.out.println("File not found for undo: " + newName);
+        }
+    }
+
+    private void undoDelete(String logEntry) {
+        // Extract file name from the log entry
+        String fileName = logEntry.replace("Deleted: ", "").trim();
+        File deletedFile = new File(folderPath, fileName + ".bak");
+
+        if(deletedFile.exists()) {
+            File restoredFile = new File(folderPath, fileName);
+            if(deletedFile.renameTo(restoredFile)) {
+                System.out.println("Restored: " + fileName);
+            } else {
+                System.out.println("Failed to restore: " + fileName);
+            }
+        } else {
+            System.out.println("No backup found for " + fileName + ", cannot restore.");
         }
     }
 
@@ -165,10 +270,11 @@ public class FileOrganizer {
     }
 
     private void deleteFile(File file) {
-        if(file.delete()) {
+        File backup = new File(file.getParent(), file.getName() + ".bak");
+        if (file.renameTo(backup)) {
             log("Deleted: " + file.getName());
         } else {
-            log("Failed to delete: " + file.getName());
+            System.out.println("Failed to delete: " + file.getName());
         }
     }
 
