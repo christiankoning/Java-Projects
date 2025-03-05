@@ -1,10 +1,13 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +45,7 @@ public class Main {
 
 class FileOrganizer {
     private final String folderPath;
+    private final Map<String, String> fileHashes = new HashMap<>();
 
     public FileOrganizer(String folderPath) {
         this.folderPath = folderPath;
@@ -66,9 +70,18 @@ class FileOrganizer {
 
         for (File file : files) {
             if (file.isFile()) {
-                String category = getCategory(file, method);
-                if (category != null) {
-                    moveFile(file, category);
+                String hash = getFileHash(file);
+
+                if(hash != null) {
+                    if(fileHashes.containsKey(hash)) {
+                        System.out.println("Duplicate found: " + file.getName() + " (Duplicate of: " + fileHashes.get(hash) + ")");
+                    } else {
+                        fileHashes.put(hash, file.getAbsolutePath());
+                        String category = getCategory(file, method);
+                        if (category != null) {
+                            moveFile(file, category);
+                        }
+                    }
                 }
             }
         }
@@ -126,6 +139,26 @@ class FileOrganizer {
             System.out.println("Moved: " + file.getName() + " → " + category);
         } catch (IOException e) {
             System.out.println("Failed to move: " + file.getName() + " (" + e.getMessage() + ")");
+        }
+    }
+
+    private String getFileHash(File file) {
+        try(FileInputStream fis = new FileInputStream(file)) {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while((bytesRead = fis.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+            byte[] hashBytes = digest.digest();
+            StringBuilder sb = new StringBuilder();
+            for(byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch(IOException | NoSuchAlgorithmException e) {
+            System.out.println("Error generating hash for file: " + file.getName());
+            return null;
         }
     }
 }
