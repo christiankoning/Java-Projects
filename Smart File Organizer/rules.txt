@@ -1,0 +1,2 @@
+Invoice_.* -> Invoices
+.*_report\\.pdf -> Reports
