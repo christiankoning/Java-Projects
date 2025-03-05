@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,9 +18,11 @@ import java.util.Scanner;
 public class FileOrganizer {
     private final String folderPath;
     private final Map<String, String> fileHashes = new HashMap<>();
+    private final File logFile;
 
     public FileOrganizer(String folderPath) {
         this.folderPath = folderPath;
+        this.logFile = new File(folderPath, "logs.txt");
     }
 
     public void organizeFiles(String method) {
@@ -47,7 +50,7 @@ public class FileOrganizer {
                 if(hash != null) {
                     if(fileHashes.containsKey(hash)) {
                         String existingFilePath = fileHashes.get(hash);
-                        System.out.println("Duplicate found: " + file.getName() + " (Duplicate of: " + fileHashes.get(hash) + ")");
+                        log("Duplicate found: " + file.getName() + " (Duplicate of: " + fileHashes.get(hash) + ")");
                         handleDuplicate(file, scanner);
                     } else {
                         fileHashes.put(hash, file.getAbsolutePath());
@@ -110,9 +113,9 @@ public class FileOrganizer {
 
         try {
             Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Moved: " + file.getName() + " → " + category);
+            log("Moved: " + file.getName() + " → " + category);
         } catch (IOException e) {
-            System.out.println("Failed to move: " + file.getName() + " (" + e.getMessage() + ")");
+            log("Failed to move: " + file.getName() + " (" + e.getMessage() + ")");
         }
     }
 
@@ -163,9 +166,9 @@ public class FileOrganizer {
 
     private void deleteFile(File file) {
         if(file.delete()) {
-            System.out.println("Deleted: " + file.getName());
+            log("Deleted: " + file.getName());
         } else {
-            System.out.println("Failed to delete: " + file.getName());
+            log("Failed to delete: " + file.getName());
         }
     }
 
@@ -175,9 +178,9 @@ public class FileOrganizer {
         File renamedFile = new File(file.getParent(), newFileName);
 
         if(file.renameTo(renamedFile)) {
-            System.out.println("Renamed: " + fileName + " -> " + newFileName);
+            log("Renamed: " + fileName + " -> " + newFileName);
         } else {
-            System.out.println("Failed to rename: " + fileName);
+            log("Failed to rename: " + fileName);
         }
     }
 
@@ -195,5 +198,13 @@ public class FileOrganizer {
         } while (newFile.exists());
 
         return newFile.getName();
+    }
+
+    private void log(String message) {
+        try(FileWriter writer = new FileWriter(logFile, true)) {
+            writer.write(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " - " + message + "\n");
+        } catch (IOException e) {
+            System.out.println("Error writing to log file: " + e.getMessage());
+        }
     }
 }
