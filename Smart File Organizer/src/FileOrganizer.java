@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class FileOrganizer {
     private final String folderPath;
@@ -37,6 +38,7 @@ public class FileOrganizer {
         }
 
         System.out.println("\nOrganizing files by " + method + " in: " + folderPath);
+        Scanner scanner = new Scanner(System.in);
 
         for (File file : files) {
             if (file.isFile()) {
@@ -44,7 +46,9 @@ public class FileOrganizer {
 
                 if(hash != null) {
                     if(fileHashes.containsKey(hash)) {
+                        String existingFilePath = fileHashes.get(hash);
                         System.out.println("Duplicate found: " + file.getName() + " (Duplicate of: " + fileHashes.get(hash) + ")");
+                        handleDuplicate(file, scanner);
                     } else {
                         fileHashes.put(hash, file.getAbsolutePath());
                         String category = getCategory(file, method);
@@ -130,5 +134,66 @@ public class FileOrganizer {
             System.out.println("Error generating hash for file: " + file.getName());
             return null;
         }
+    }
+
+    private void handleDuplicate(File duplicate, Scanner scanner) {
+        System.out.println("Choose an action:");
+        System.out.println("1. Delete the duplicate");
+        System.out.println("2. Rename the duplicate");
+        System.out.println("3. Move to 'Duplicates' folder");
+        System.out.print("Enter your choice (1, 2, or 3): ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                deleteFile(duplicate);
+                break;
+            case 2:
+                renameFile(duplicate);
+                break;
+            case 3:
+                moveFile(duplicate, "Duplicates");
+                break;
+            default:
+                System.out.println("Invalid choice. Skipping duplicate...");
+        }
+    }
+
+    private void deleteFile(File file) {
+        if(file.delete()) {
+            System.out.println("Deleted: " + file.getName());
+        } else {
+            System.out.println("Failed to delete: " + file.getName());
+        }
+    }
+
+    private void renameFile(File file) {
+        String fileName = file.getName();
+        String newFileName = getNewFileName(file);
+        File renamedFile = new File(file.getParent(), newFileName);
+
+        if(file.renameTo(renamedFile)) {
+            System.out.println("Renamed: " + fileName + " -> " + newFileName);
+        } else {
+            System.out.println("Failed to rename: " + fileName);
+        }
+    }
+
+    private String getNewFileName(File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf(".");
+        String baseName = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
+        String extension = (dotIndex == -1) ? "" : fileName.substring(dotIndex);
+
+        int count = 1;
+        File newFile;
+        do {
+            newFile = new File(file.getParent(), baseName + " (" + count + ")" + extension);
+            count ++;
+        } while (newFile.exists());
+
+        return newFile.getName();
     }
 }
